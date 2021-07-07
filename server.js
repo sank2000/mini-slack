@@ -22,3 +22,9 @@ io.on('connection', (socket) => {
   });
   socket.emit('nsList', nsData);
 });
+
+namespaces.forEach((namespace) => {
+  io.of(namespace.endpoint).on('connection', (nsSocket) => {
+    nsSocket.emit('nsRoomLoad', namespace.rooms);
+  });
+});
