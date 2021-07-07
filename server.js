@@ -3,7 +3,7 @@ const socketIo = require('socket.io');
 
 const app = express();
 
-const name = require('./data/namespaces');
+const namespaces = require('./data/namespaces');
 
 app.use(express.static(__dirname + '/public'));
 
@@ -14,20 +14,11 @@ const expressServer = app.listen(8080, () => {
 const io = socketIo(expressServer);
 
 io.on('connection', (socket) => {
-  socket.emit('messageFromServer', { data: 'Welcome to the socketIo server' });
-
-  socket.on('newMessageToServer', (msg) => {
-    console.log(msg);
-    io.emit('messageToClients', { text: msg.text });
+  const nsData = namespaces.map((ns) => {
+    return {
+      img: ns.img,
+      endpoint: ns.endpoint,
+    };
   });
-
-  socket.join('level1');
-  socket
-    .to('level1')
-    .emit('joined', `${socket.id} says I have joined the level 1 room`);
-});
-
-io.of('/admin').on('connection', (socket) => {
-  console.log('Someone connected to the admin namespace!');
-  io.of('/admin').emit('welcome', 'Welcome to the admin channel!');
+  socket.emit('nsList', nsData);
 });
