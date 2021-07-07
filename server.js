@@ -3,6 +3,8 @@ const socketIo = require('socket.io');
 
 const app = express();
 
+const name = require('./data/namespaces');
+
 app.use(express.static(__dirname + '/public'));
 
 const expressServer = app.listen(8080, () => {
