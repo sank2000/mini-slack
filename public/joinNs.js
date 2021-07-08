@@ -1,4 +1,13 @@
 function joinNs(endpoint) {
+  if (nsSocket) {
+    nsSocket.close();
+
+    // remove the eventListener before it's added again
+    document
+      .querySelector('#user-input')
+      .removeEventListener('submit', formSubmission);
+  }
+
   nsSocket = io(`http://localhost:8080${endpoint}`);
   nsSocket.on('nsRoomLoad', (nsRooms) => {
     let roomList = document.querySelector('.room-list');
@@ -16,7 +25,7 @@ function joinNs(endpoint) {
     let roomNodes = document.getElementsByClassName('room');
     Array.from(roomNodes).forEach((elem) => {
       elem.addEventListener('click', (e) => {
-        console.log('Someone clicked on ', e.target.innerText);
+        joinRoom(e.target.innerText);
       });
     });
 

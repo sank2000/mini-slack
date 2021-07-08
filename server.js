@@ -28,16 +28,18 @@ namespaces.forEach((namespace) => {
     nsSocket.emit('nsRoomLoad', namespace.rooms);
 
     nsSocket.on('joinRoom', async (roomToJoin, numberOfUsersCallback) => {
-      const clients = await io.of('/wiki').allSockets();
-      nsSocket.join('New Articles');
+      const roomToLeave = Array.from(nsSocket.rooms)[1];
+      nsSocket.leave(roomToLeave);
+      await updateUsersInRoom(namespace, roomToLeave);
+
+      nsSocket.join(roomToJoin);
 
       const nsRoom = namespace.rooms.find((room) => {
         return room.roomTitle === roomToJoin;
       });
       nsSocket.emit('historyCatchUp', nsRoom.history);
-      numberOfUsersCallback(clients.size);
 
-      io.of('/wiki').in('New Articles').emit('updateMembers', clients.size);
+      await updateUsersInRoom(namespace, roomToJoin);
     });
     nsSocket.on('newMessageToServer', (msg) => {
       const fullMsg = {
@@ -55,7 +57,12 @@ namespaces.forEach((namespace) => {
       });
       nsRoom.addMessage(fullMsg);
 
-      io.of('/wiki').to(roomTitle).emit('messageToClients', fullMsg);
+      io.of(namespace.endpoint).to(roomTitle).emit('messageToClients', fullMsg);
     });
   });
 });
+
+async function updateUsersInRoom(namespace, roomToJoin) {
+  const clients = await io.of(namespace.endpoint).in(roomToJoin).allSockets();
+  io.of(namespace.endpoint).in(roomToJoin).emit('updateMembers', clients.size);
+}
