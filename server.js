@@ -29,8 +29,15 @@ namespaces.forEach((namespace) => {
 
     nsSocket.on('joinRoom', async (roomToJoin, numberOfUsersCallback) => {
       const clients = await io.of('/wiki').allSockets();
-      nsSocket.join('/wiki');
+      nsSocket.join('New Articles');
+
+      const nsRoom = namespace.rooms.find((room) => {
+        return room.roomTitle === roomToJoin;
+      });
+      nsSocket.emit('historyCatchUp', nsRoom.history);
       numberOfUsersCallback(clients.size);
+
+      io.of('/wiki').in('New Articles').emit('updateMembers', clients.size);
     });
     nsSocket.on('newMessageToServer', (msg) => {
       const fullMsg = {
@@ -41,6 +48,13 @@ namespaces.forEach((namespace) => {
       };
 
       const roomTitle = Array.from(nsSocket.rooms)[1];
+
+      // history
+      const nsRoom = namespace.rooms.find((room) => {
+        return room.roomTitle === roomTitle;
+      });
+      nsRoom.addMessage(fullMsg);
+
       io.of('/wiki').to(roomTitle).emit('messageToClients', fullMsg);
     });
   });
