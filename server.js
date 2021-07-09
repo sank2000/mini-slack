@@ -25,6 +25,8 @@ io.on('connection', (socket) => {
 
 namespaces.forEach((namespace) => {
   io.of(namespace.endpoint).on('connection', (nsSocket) => {
+    const username = nsSocket.handshake.query.username;
+
     nsSocket.emit('nsRoomLoad', namespace.rooms);
 
     nsSocket.on('joinRoom', async (roomToJoin, numberOfUsersCallback) => {
@@ -45,7 +47,7 @@ namespaces.forEach((namespace) => {
       const fullMsg = {
         text: msg.text,
         time: Date.now(),
-        username: 'san',
+        username,
         avatar: 'https://via.placeholder.com/30',
       };
 

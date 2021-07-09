@@ -1,4 +1,11 @@
-const socket = io('http://localhost:8080');
+const username = prompt('What is your username?');
+
+const socket = io('http://localhost:8080', {
+  query: {
+    username,
+  },
+});
+
 let nsSocket;
 
 socket.on('nsList', (nsData) => {
