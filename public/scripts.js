@@ -2,7 +2,7 @@ const username = prompt('What is your username?');
 
 const socket = io('http://localhost:8080', {
   query: {
-    username,
+    username: username ?? 'user',
   },
 });
 

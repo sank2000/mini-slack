@@ -115,3 +115,8 @@ input {
   display: flex;
   align-items: stretch;
 }
+
+.start-msg {
+  margin-top: 20px;
+  color: gray;
+}

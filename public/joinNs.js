@@ -36,6 +36,10 @@ function joinNs(endpoint) {
 
   nsSocket.on('messageToClients', (msg) => {
     console.log(msg);
+    const startMsg = document.querySelector('.start-msg');
+    if (startMsg) {
+      startMsg.remove();
+    }
     const newMsg = buildHTML(msg);
     document.querySelector('#messages').innerHTML += newMsg;
   });

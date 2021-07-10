@@ -8,6 +8,9 @@ function joinRoom(roomName) {
   nsSocket.on('historyCatchUp', (history) => {
     const messagesUl = document.querySelector('#messages');
     messagesUl.innerHTML = '';
+    if (history.length === 0) {
+      messagesUl.innerHTML += `<p class='start-msg'>Be first to start a conversation in this room. <p>`;
+    }
     history.forEach((msg) => {
       const newMsg = buildHTML(msg);
       messagesUl.innerHTML += newMsg;
