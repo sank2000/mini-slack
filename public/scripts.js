@@ -18,9 +18,12 @@ socket.on('nsList', (nsData) => {
   Array.from(document.getElementsByClassName('namespace')).forEach((elem) => {
     elem.addEventListener('click', (e) => {
       const nsEndpoint = elem.getAttribute('ns');
+      document.querySelector('.room-title').innerText =
+        nsEndpoint.split('/')[1];
       joinNs(nsEndpoint);
     });
   });
 
   joinNs('/wiki');
+  document.querySelector('.room-title').innerText = 'wiki';
 });
