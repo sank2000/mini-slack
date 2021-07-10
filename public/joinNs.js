@@ -46,8 +46,9 @@ function joinNs(endpoint) {
 
 function formSubmission(event) {
   event.preventDefault();
-  const newMessage = document.querySelector('#user-message').value;
-  nsSocket.emit('newMessageToServer', { text: newMessage });
+  const messageField = document.querySelector('#user-message');
+  nsSocket.emit('newMessageToServer', { text: messageField.value });
+  messageField.value = '';
 }
 
 function buildHTML(msg) {
